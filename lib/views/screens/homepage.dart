@@ -16,7 +16,7 @@ class _HomepageState extends State<Homepage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late PageController _pageController;
   int correctAnswers = 0;
-
+  int length = 0;
   @override
   void initState() {
     super.initState();
@@ -62,6 +62,7 @@ class _HomepageState extends State<Homepage> {
             );
           }
           final quizes = snapshot.data!.docs;
+          length = quizes.length;
           return quizes.isEmpty
               ? const Center(
                   child: Text("List bo'sh"),
