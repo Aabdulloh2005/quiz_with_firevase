@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "707577937763",
+    "project_id": "lesson66-e0c3e",
+    "storage_bucket": "lesson66-e0c3e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707577937763:android:cecf4b8ea1623e1df85d56",
+        "android_client_info": {
+          "package_name": "com.example.fayrbase_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUQzviZANpeTc2dtACHPdDlPtVxX1NJF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
