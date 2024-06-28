@@ -1,6 +1,7 @@
 import 'package:fayrbase_project/views/widgets/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:fayrbase_project/models/question.dart';
 import 'package:fayrbase_project/controllers/question_controller.dart';
@@ -102,7 +103,16 @@ class _QuestionFormState extends State<QuestionForm> {
             children: [
               TextFormField(
                 controller: _questionController,
-                decoration: const InputDecoration(labelText: 'Question'),
+                decoration: const InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1.5,
+                      color: Colors.white,
+                    ),
+                  ),
+                  labelText: 'Question',
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a question';
@@ -110,22 +120,40 @@ class _QuestionFormState extends State<QuestionForm> {
                   return null;
                 },
               ),
+              SizedBox(
+                height: 15,
+              ),
               ..._answerControllers.asMap().entries.map((entry) {
                 final index = entry.key;
                 final controller = entry.value;
                 return Row(
                   children: [
                     Expanded(
-                      child: TextFormField(
-                        controller: controller,
-                        decoration:
-                            InputDecoration(labelText: 'Answer ${index + 1}'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter an answer';
-                          }
-                          return null;
-                        },
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: controller,
+                            decoration: InputDecoration(
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  width: 1.5,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              labelText: 'Answer ${index + 1}',
+                              labelStyle: TextStyle(color: Colors.white),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an answer';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ],
                       ),
                     ),
                     if (_answerControllers.length > 2)
@@ -139,6 +167,13 @@ class _QuestionFormState extends State<QuestionForm> {
               TextFormField(
                 controller: _correctAnswerController,
                 decoration: const InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1.5,
+                        color: Colors.white,
+                      ),
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
                     labelText: 'Correct Answer Index (0-based)'),
                 validator: (value) {
                   final index = int.tryParse(value ?? '');
@@ -149,6 +184,9 @@ class _QuestionFormState extends State<QuestionForm> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(
+                height: 15,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
