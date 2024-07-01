@@ -14,5 +14,12 @@ class QuestionController extends ChangeNotifier {
     notifyListeners();
   }
 
-  
+  void editQuestion(
+      String id, List<String> answers, int correct, String question) {
+    _quizFirestore.editQuestion(id, answers, correct, question);
+  }
+
+  void delteQuestion(String id) {
+    _quizFirestore.delteQuestion(id);
+  }
 }

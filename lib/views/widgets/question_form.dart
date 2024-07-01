@@ -1,13 +1,11 @@
-import 'package:fayrbase_project/views/widgets/custom_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:fayrbase_project/models/question.dart';
 import 'package:fayrbase_project/controllers/question_controller.dart';
 
 class QuestionForm extends StatefulWidget {
-  const QuestionForm({Key? key}) : super(key: key);
+  Question? question;
+  QuestionForm({this.question, super.key});
 
   @override
   _QuestionFormState createState() => _QuestionFormState();
@@ -15,23 +13,32 @@ class QuestionForm extends StatefulWidget {
 
 class _QuestionFormState extends State<QuestionForm> {
   final _formKey = GlobalKey<FormState>();
-  final _questionController = TextEditingController();
+  final _textController = TextEditingController();
   final List<TextEditingController> _answerControllers = [
+    TextEditingController(),
+    TextEditingController(),
     TextEditingController(),
     TextEditingController(),
   ];
   final _correctAnswerController = TextEditingController();
-  late QuestionController questionController;
+  QuestionController questionController = QuestionController();
 
   @override
   void initState() {
     super.initState();
+    if (widget.question != null) {
+      _textController.text = widget.question!.question;
+      for (int i = 0; i < widget.question!.answers.length; i++) {
+        _answerControllers[i].text = widget.question!.answers[i];
+      }
+      _correctAnswerController.text = widget.question!.correct.toString();
+    }
     questionController = context.read<QuestionController>();
   }
 
   @override
   void dispose() {
-    _questionController.dispose();
+    _textController.dispose();
     _correctAnswerController.dispose();
     for (var controller in _answerControllers) {
       controller.dispose();
@@ -57,7 +64,7 @@ class _QuestionFormState extends State<QuestionForm> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final question = _questionController.text;
+      final question = _textController.text;
       final answers =
           _answerControllers.map((controller) => controller.text).toList();
       final correct = int.tryParse(_correctAnswerController.text);
@@ -70,13 +77,18 @@ class _QuestionFormState extends State<QuestionForm> {
           correct: correct,
         );
 
-        questionController.addQuestion(
-          answers,
-          correct,
-          question,
-        );
+        if (widget.question != null) {
+          questionController.editQuestion(
+              widget.question!.id, answers, correct, question);
+        } else {
+          questionController.addQuestion(
+            answers,
+            correct,
+            question,
+          );
+        }
 
-        _questionController.clear();
+        _textController.clear();
         _correctAnswerController.clear();
         for (var controller in _answerControllers) {
           controller.clear();
@@ -102,7 +114,7 @@ class _QuestionFormState extends State<QuestionForm> {
           child: ListView(
             children: [
               TextFormField(
-                controller: _questionController,
+                controller: _textController,
                 decoration: const InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -120,7 +132,7 @@ class _QuestionFormState extends State<QuestionForm> {
                   return null;
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               ..._answerControllers.asMap().entries.map((entry) {
@@ -141,7 +153,7 @@ class _QuestionFormState extends State<QuestionForm> {
                                 ),
                               ),
                               labelText: 'Answer ${index + 1}',
-                              labelStyle: TextStyle(color: Colors.white),
+                              labelStyle: const TextStyle(color: Colors.white),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -163,7 +175,7 @@ class _QuestionFormState extends State<QuestionForm> {
                       ),
                   ],
                 );
-              }).toList(),
+              }),
               TextFormField(
                 controller: _correctAnswerController,
                 decoration: const InputDecoration(
@@ -205,7 +217,6 @@ class _QuestionFormState extends State<QuestionForm> {
           ),
         ),
       ),
-      drawer: const CustomDrawer(),
     );
   }
 }

@@ -1,10 +1,13 @@
 import 'package:fayrbase_project/controllers/question_controller.dart';
 import 'package:fayrbase_project/firebase_options.dart';
 import 'package:fayrbase_project/providers/select_index.dart';
+import 'package:fayrbase_project/services/auth_firestore_service.dart';
 import 'package:fayrbase_project/views/screens/homepage.dart';
+import 'package:fayrbase_project/views/screens/log_in_screen.dart';
+import 'package:fayrbase_project/views/screens/register_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 void main(List<String> args) async {
@@ -25,16 +28,27 @@ class MyWidget extends StatelessWidget {
       ],
       builder: (context, child) {
         return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            appBarTheme: const AppBarTheme(
-              surfaceTintColor: Colors.transparent,
-              backgroundColor: Colors.transparent,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              appBarTheme: const AppBarTheme(
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+              ),
+              scaffoldBackgroundColor: const Color(0xff7F80DB),
             ),
-            scaffoldBackgroundColor: const Color(0xff7F80DB),
-          ),
-          home: const Homepage(),
-        );
+            home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                final data = snapshot.data;
+
+                return data == null ? LogInScreen() : Homepage();
+              },
+            ));
       },
     );
   }
